@@ -6,6 +6,7 @@ const helper = require("../../utils/helper");
 const path = require("../../utils/path");
 const parsedSchema = require("./parsed");
 const dereferencedSchema = require("./dereferenced");
+const rereferencedSchema = require("./rereferenced");
 
 describe("Schema with circular (recursive) $refs", () => {
   describe("$ref to self", () => {
@@ -83,6 +84,16 @@ describe("Schema with circular (recursive) $refs", () => {
       // The "circular" flag should NOT be set
       // (it only gets set by `dereference`)
       expect(parser.$refs.circular).to.equal(false);
+    });
+
+    it("should rereference successfully", async () => {
+      let parser = new $RefParser();
+      const schemaDeref = await parser.dereference(path.rel("specs/circular/circular-self.yaml"));
+      parser = new $RefParser();
+      const schema = await parser.rereference(schemaDeref);
+
+      expect(schema).to.equal(parser.schema);
+      expect(schema).to.deep.equal(rereferencedSchema.self);
     });
   });
 
@@ -165,6 +176,16 @@ describe("Schema with circular (recursive) $refs", () => {
       // The "circular" flag should NOT be set
       // (it only gets set by `dereference`)
       expect(parser.$refs.circular).to.equal(false);
+    });
+
+    it("should rereference successfully", async () => {
+      let parser = new $RefParser();
+      const schemaDeref = await parser.dereference(path.rel("specs/circular/circular-ancestor.yaml"));
+      parser = new $RefParser();
+      const schema = await parser.rereference(schemaDeref);
+
+      expect(schema).to.equal(parser.schema);
+      expect(schema).to.deep.equal(rereferencedSchema.ancestor);
     });
   });
 
@@ -252,6 +273,16 @@ describe("Schema with circular (recursive) $refs", () => {
       // (it only gets set by `dereference`)
       expect(parser.$refs.circular).to.equal(false);
     });
+
+    it("should rereference successfully", async () => {
+      let parser = new $RefParser();
+      const schemaDeref = await parser.dereference(path.rel("specs/circular/circular-indirect.yaml"));
+      parser = new $RefParser();
+      const schema = await parser.rereference(schemaDeref);
+
+      expect(schema).to.equal(parser.schema);
+      expect(schema).to.deep.equal(rereferencedSchema.indirect);
+    });
   });
 
   describe("indirect circular and ancestor $refs", () => {
@@ -337,6 +368,16 @@ describe("Schema with circular (recursive) $refs", () => {
       // The "circular" flag should NOT be set
       // (it only gets set by `dereference`)
       expect(parser.$refs.circular).to.equal(false);
+    });
+
+    it("should rereference successfully", async () => {
+      let parser = new $RefParser();
+      const schemaDeref = await parser.dereference(path.rel("specs/circular/circular-indirect-ancestor.yaml"));
+      parser = new $RefParser();
+      const schema = await parser.rereference(schemaDeref);
+
+      expect(schema).to.equal(parser.schema);
+      expect(schema).to.deep.equal(rereferencedSchema.indirectAncestor);
     });
   });
 
